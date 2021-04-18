@@ -1,0 +1,56 @@
+name: dataset_catalog
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: python:3.9
+
+    services:
+      postgres:
+        image: postgres:13-alpine
+        env:
+          POSTGRES_DB: dataset_catalog_test
+          POSTGRES_USER: dataset_catalog
+          POSTGRES_PASSWORD: pswd00
+          POSTGRES_HOST: postgres
+          POSTGRES_PORT: 5432
+
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          make venv
+
+      - name: Check new versions of packages
+        run: |
+          make check-deps
+
+      - name: Lint with all the linters
+        run: |
+          make lint
+
+      - name: Test with pytest
+        run: |
+          make test
+        env:
+          DB_HOST: postgres
+          DB_PORT: 5432
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: coverage.xml
+          path: coverage.xml
+
+      - name: Upload Coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          verbose: true
