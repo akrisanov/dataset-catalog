@@ -176,11 +176,3 @@ It can be dataset name, comments, anything.
 _Despite my advice above, for the sake of the task, I'm going with a naive implementation of
 handling file upload manually on the FastAPI level and will explorer if it's possible to stream
 datasets directly to the storage._
-
-## Infra
-
-- If you decide going with Nginx as reverse proxy, don't forget about configuring:
-  - CORS headers
-  - The `client_max_body_size` setting to limit a size of uploads
-- Use something like Prometheus and Grafana for monitoring application health and resource utilization.
-- Helm package to deploy all the resources in one shot.
