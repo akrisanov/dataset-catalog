@@ -176,3 +176,7 @@ It can be dataset name, comments, anything.
 _Despite my advice above, for the sake of the task, I'm going with a naive implementation of
 handling file upload manually on the FastAPI level and will explorer if it's possible to stream
 datasets directly to the storage._
+
+## Database Schema
+
+![public schema](public.png)

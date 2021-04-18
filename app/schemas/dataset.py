@@ -15,9 +15,10 @@ class Dataset(BaseSchema):
         example="Nearby Social Network - All Posts",
         description="Name of the dataset",
     )
+
     path: pathlib.Path = Field(
         ...,
-        example="/datasets/{shortuuid}/{file_name}.csv",
+        example="{shortuuid}/{file_name}.csv",
         description="Relative path to the dataset inside object storage",
     )
 

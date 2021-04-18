@@ -56,6 +56,40 @@ make serve
 
 [Open](http://localhost:8000/docs) Swagger UI in your favourite browser.
 
+## Upload a Big File
+
+1. Download a few big datasets. You can find some at Kaggle.
+I've tried [Nearby Social Network - All Posts](https://www.kaggle.com/brianhamachek/nearby-social-network-all-posts)
+and allposts.csv (~47 GB).
+
+2. Generate MD5 hash for a file you want to upload:
+
+```shell
+md5 allposts.csv
+MD5 (allposts.csv) = 148a68b39a273bfda5ece7d868c9c1c8
+```
+
+3. Make a request:
+
+```shell
+curl -X 'PUT' \
+  'http://localhost:8000/datasets' \
+  -H 'accept: application/json' \
+  -H 'content-md5: 148a68b39a273bfda5ece7d868c9c1c8' \
+  -H 'Content-Type: multipart/form-data' \
+  -F 'dataset_name=Nearby Social Network - All Posts' \
+  -F 'dataset_file=@allposts.csv;type=text/csv'
+```
+
+Try another one to simulate simultaneous uploads. See how some of your CPU cores start to load
+(thanks to ThreadPool in Minio SDK and GIL limitations). Memory consumption doesn't grow fast,
+but a bandwidth of disk reads and writes grows, sometimes twice as much as an uploaded file because
+of `SpooledTemporaryFile`.
+
+_No doubt this kind of naive testing does not show how the implemented web service will work in the
+production environment. But at least it shows how you can upload large files to any S3-compatible
+storage in your FastAPI application._
+
 ---
 
 © Andrey Krisanov, 2021
