@@ -1,10 +1,10 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, PositiveInt
 
 
 class BaseSchema(BaseModel):
-    """A base Pydantic schema of the application."""
+    """A base validation schema of the application."""
 
     class Config:
         anystr_strip_whitespace = True
@@ -18,16 +18,13 @@ class Message(BaseSchema):
 
 
 class Paginator(BaseModel):
-    """
-    Pagination fields inside the payload:
-    * total_count: total number of records
-    * page: current requested page
-    * max_per_page: max number of items of the requested collection
-    """
+    """Pagination fields inside the payload."""
 
-    total_count: int
-    page: int
-    max_per_page: int
+    total_count: int = Field(..., description="Total number of items")
+    page: PositiveInt = Field(..., description="Current requested page")
+    max_per_page: PositiveInt = Field(
+        ..., description="Max number of items of the requested collection"
+    )
 
 
 EMPTY_RESPONSE = {"content": None}
@@ -41,7 +38,9 @@ def error_response(description: str) -> dict:
     }
 
 
-def paginator_params(page: Optional[int] = 1, max_per_page: Optional[int] = 10) -> dict:
+def paginator_params(
+    page: Optional[PositiveInt] = 1, max_per_page: Optional[PositiveInt] = 10
+) -> dict:
     """Build an object out of pagination params."""
     return {"page": page, "max_per_page": max_per_page}
 

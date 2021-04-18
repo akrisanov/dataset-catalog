@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.handlers import services_router
+from app.handlers import datasets_router, services_router
 from app.settings.base import app_settings, db
 
 
@@ -20,6 +20,7 @@ app = FastAPI(
 )
 
 app.include_router(services_router, tags=["services"])
+app.include_router(datasets_router, tags=["datasets"])
 
 
 @app.on_event("startup")

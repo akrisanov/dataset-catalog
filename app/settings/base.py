@@ -2,7 +2,7 @@ import os
 from typing import Optional, Set
 
 import databases
-from pydantic import BaseSettings
+from pydantic import BaseSettings, PositiveInt
 
 
 class ServerSettings(BaseSettings):
@@ -12,18 +12,13 @@ class ServerSettings(BaseSettings):
     """
 
     host: str = "127.0.0.1"
-    port: int = 8000
+    port: PositiveInt = 8000
     root_path: str = ""  # e.g. "/api/datasets"
     log_level: str = "info"
     debug: bool = False
     reload: bool = False
     reload_dirs: Set[str] = {"app"}  # в yaml: '["app"]'
-    workers: Optional[int] = None
-
-
-# NOTE: Instead of defining global configs and import those variables, we can use the FastAPI
-# [dependency mechanism](https://fastapi.tiangolo.com/advanced/settings/#settings-in-a-dependency).
-# It can be useful in tests.
+    workers: Optional[PositiveInt] = None
 
 
 class AppSettings(BaseSettings):

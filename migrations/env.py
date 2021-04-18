@@ -6,6 +6,7 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
+import app.models.dataset as dataset_model
 from app.settings.base import db_settings
 
 
@@ -24,8 +25,9 @@ config.set_section_option(section, "DB_NAME", db_settings.db_name)
 # This line sets up loggers basically.
 fileConfig(config.config_file_name)
 
-target_metadata = [  # type: ignore
-    # TODO: add your model's MetaData object here for 'autogenerate' support
+# Add your model's MetaData object here for 'autogenerate' support
+target_metadata = [
+    dataset_model.metadata,
 ]
 
 
