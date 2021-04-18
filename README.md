@@ -1,5 +1,7 @@
 # Dataset Catalog
 
+[![dataset_catalog](https://github.com/akrisanov/dataset-catalog/actions/workflows/dataset-catalog.yml/badge.svg)](https://github.com/akrisanov/dataset-catalog/actions/workflows/dataset-catalog.yml) [![codecov](https://codecov.io/gh/akrisanov/dataset-catalog/branch/master/graph/badge.svg?token=QBMa7gcOBe)](https://codecov.io/gh/akrisanov/dataset-catalog)
+
 A naive web service for uploading datasets to the imaginary data store and retrieving the information about them.
 
 ## Documentation
