@@ -21,6 +21,11 @@ class ServerSettings(BaseSettings):
     workers: Optional[int] = None
 
 
+# NOTE: Instead of defining global configs and import those variables, we can use the FastAPI
+# [dependency mechanism](https://fastapi.tiangolo.com/advanced/settings/#settings-in-a-dependency).
+# It can be useful in tests.
+
+
 class AppSettings(BaseSettings):
     sentry_dsn: Optional[str] = None
     docs_url: str = "/docs"
