@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+    db:
+        image: postgres:13
+        environment:
+            - POSTGRES_USER=dataset_catalog
+            - POSTGRES_PASSWORD=pswd00
+        ports:
+            - 15432:5432
+        volumes:
+            - ./mount/postgres:/var/lib/postgresql/data
+            - ./init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
+        restart: always
+
+    s3:
+        image: minio/minio:latest
+        entrypoint: sh
+        command: -c 'mkdir -p /data/datasets/ && /usr/bin/minio server /data'
+        environment:
+            - MINIO_ACCESS_KEY=LOCAL_ACCESS_KEY
+            - MINIO_SECRET_KEY=LOCAL_SECRET_KEY
+        ports:
+            - 9000:9000
+        volumes:
+            - ./mount/minio:/data
+        restart: always
