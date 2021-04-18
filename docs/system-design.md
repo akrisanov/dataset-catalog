@@ -92,6 +92,7 @@ depends on the low-level implementation details of our web service.
 
 But we know that:
 
+- A client uploads a whole file, not chunks.
 - Working with files involves working with threads → we can't scale much on CPU (vertical scaling)
 because of GIL. The only thing we can do is to set the right number of worker processes.
 - We don't want to read an upload file in memory because it'll crash an application.
@@ -176,6 +177,21 @@ It can be dataset name, comments, anything.
 _Despite my advice above, for the sake of the task, I'm going with a naive implementation of
 handling file upload manually on the FastAPI level and will explorer if it's possible to stream
 datasets directly to the storage._
+
+## * One More Option a.k.a Idea In The Shower
+
+Actually, we can turn the upload problem into the download problem. By doing that, we eliminate
+a lot of pain points and ask a client to provide the following request parameters:
+
+1. Dataset URL from which we can download a file. For security purposes, it can be pre-signed,
+have an expiry time and/or some authorization mechanism like basic auth.
+2. MD5 checksum that we use to check that dataset is not corrupted traversing the network.
+
+Then we take the async HTTP client (httpx is my favorite one) and
+[stream bytes](https://www.python-httpx.org/quickstart/#streaming-responses) asynchronously from
+the customer URL to our storage.
+
+_Go with this idea, seriously 😀_
 
 ## Database Schema
 
