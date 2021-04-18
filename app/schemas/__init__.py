@@ -1,2 +1,2 @@
 from .dataset import Dataset, DatasetList
-from .response import paginator_params, page_data, Message
+from .response import error_response, paginator_params, page_data, Message

@@ -1,9 +1,12 @@
+import pathlib
+
 import pytest
 import shortuuid
 from httpx import AsyncClient
 from mimesis import Generic
 
 from app.repositories import datasets_repo
+from app.utils.storage import storage
 
 
 @pytest.mark.asyncio
@@ -23,7 +26,7 @@ async def posts_dataset_row():
     dataset_row = await datasets_repo.insert_row(
         {
             "name": g.business.company(),
-            "path": f"/datasets/{shortuuid.uuid()}/allposts.csv",
+            "path": f"{shortuuid.uuid()}/allposts.csv",
         }
     )
     yield dataset_row
@@ -57,3 +60,35 @@ async def test_get_datasets_with_one_item_second_page(
     assert data["page"] == 2
     assert data["max_per_page"] == 5
     assert len(data["datasets"]) == 0
+
+
+@pytest.fixture
+def upload_request():
+    dataset = pathlib.Path.cwd() / "tests/data/heart.csv"
+
+    return {
+        "data": {"dataset_name": "Heart"},
+        "files": {"dataset_file": open(dataset, "rb")},
+        "headers": {"content-md5": "4740fea127fd35cb58a20e2bcc8bf586"},
+    }
+
+
+@pytest.mark.asyncio
+async def test_upload_dataset(client: AsyncClient, upload_request, monkeypatch):
+    """Tests that API responds with a successful response when file upload is finished."""
+
+    async def mock_upload(bucket_name, object_name, data, metadata, length, part_size):
+        return True
+
+    monkeypatch.setattr(storage, "put_object", mock_upload)
+
+    resp = await client.put("/datasets", **upload_request)
+    data = resp.json()
+
+    assert resp.status_code == 200
+    assert data["detail"] == "File successfully uploaded to the storage."
+
+    dataset_rows = await datasets_repo.get_rows()
+    assert len(dataset_rows) == 1
+
+    await datasets_repo.delete_rows()

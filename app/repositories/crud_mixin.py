@@ -50,3 +50,8 @@ class CrudMixin:
             and_(*(extract_column(self.table, k) == v for k, v in where_kwargs.items()))
         )
         return await db.execute(query)
+
+    async def delete_rows(self, **where_kwargs):
+        """Delete all the rows in a table."""
+        query = self.table.delete()
+        return await db.execute(query)

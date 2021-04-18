@@ -1,21 +1,24 @@
 import shortuuid
 
 from app.repositories import datasets_repo
-from app.schemas import DatasetList, Message, page_data, paginator_params
+from app.schemas import DatasetList, Message, error_response, page_data, paginator_params
 from app.utils.logging import app_logger
 from app.utils.storage import S3Exception, bucket_name, storage
 
 
 from fastapi import (  # isort: skip
     APIRouter,
-    Body,
     Depends,
     File,
+    Form,
     Header,
     HTTPException,
     UploadFile,
+    Request,
     status,
 )
+
+UPLOAD_FAILED = "Dataset can not be uploaded. Please try again."
 
 
 datasets_router = APIRouter()
@@ -45,6 +48,7 @@ async def get_datasets(paginator: dict = Depends(paginator_params)):
 @datasets_router.put(
     "/datasets",
     response_model=Message,
+    responses={status.HTTP_404_NOT_FOUND: error_response(UPLOAD_FAILED)},
     status_code=status.HTTP_200_OK,  # Follows AWS convention
     summary="Upload dataset to the storage",
     description="This API endpoint uses "
@@ -56,7 +60,8 @@ async def get_datasets(paginator: dict = Depends(paginator_params)):
     "system yet, and FastAPI will spawn a new thread for file upload. ",
 )
 async def upload_dataset(
-    dataset_name: str = Body(..., description="Dataset name", max_length=255),
+    request: Request,
+    dataset_name: str = Form(..., description="Dataset name", max_length=255),
     dataset_file: UploadFile = File(..., description="Dataset file"),
     content_md5: str = Header(
         ...,
@@ -82,7 +87,7 @@ async def upload_dataset(
     except S3Exception:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Dataset can not be uploaded. Please try again.",
+            detail=UPLOAD_FAILED,
         )
 
     dataset_row = await datasets_repo.insert_row(
