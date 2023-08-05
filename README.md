@@ -2,7 +2,7 @@
 
 [![dataset_catalog](https://github.com/akrisanov/dataset-catalog/actions/workflows/dataset-catalog.yml/badge.svg)](https://github.com/akrisanov/dataset-catalog/actions/workflows/dataset-catalog.yml) [![codecov](https://codecov.io/gh/akrisanov/dataset-catalog/branch/main/graph/badge.svg?token=QBMa7gcOBe)](https://codecov.io/gh/akrisanov/dataset-catalog)
 
-A naive web service for uploading datasets to the imaginary data store and retrieving the information about them.
+An educational project of a web service for uploading datasets to S3-compatible storage and retrieving information about them.
 
 ## Documentation
 
@@ -20,7 +20,7 @@ A naive web service for uploading datasets to the imaginary data store and retri
 - FastAPI
 - Uvicorn
 - PostgreSQL
-- S3-compatible storage
+- Minio an S3-compatible storage
 - Containers
 
 ## Project Layout
